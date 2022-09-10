@@ -37,17 +37,13 @@ Some questions to ask / figure out
 
 Current Hierarchy is defined as such
 
-![userinput](userinput.png)
+![userinput2](userinput2.png)
 
-Works:
+This is based on `name` strategy to cast to the respective classes. While this works, but there is still no differentiation between `Selection` and `FreeText` class given that there is no validation (at the moment).
 
-- Able to serialize / deserialize based on `Jackson Deduction-based polymorphism`
+If we trust the input from the client, client could have passed a `Selection` field value as a `FreeText` type and server would not know. How can we validate this to ensure otherwise? Or do we need to?
 
-Don't Work:
-
-- If the object is a `subclass` and within a `Box` object such as `Address` then it don't work at the moment (see `shouldCastToSelectionClass_givenBoxedReferenceClass`)
-
-While I use `Deduction` for `@JsonTypeInfo`, which may be suited for `Reference` and `Non-Reference` based class, any `subclass` of `Non-Reference` may need to use a different strategy such as `Name` as it might make more sense. Not sure if a mixture of strategy will work, but need to test it out. Alternatively, should just use `Name` strategy upfront for all classes
+For example, given the class is `Address`, we know that it contains `FieldX` and `FieldY`. And each field should have a fixed of value that we expected. In this case, is it possible to check the input from client against this list to ensure what we are receiving is valid? Even if that is possible, do we want to do so? Is it too strict? How should the list be stored? Database or static list?
 
 # Reference
 

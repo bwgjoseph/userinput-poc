@@ -1,11 +1,13 @@
 package com.bwgjoseph.userinputpoc;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import lombok.Getter;
 import lombok.ToString;
 
-@ToString(callSuper = true)
+@ToString
 @Getter
-public class FreeText extends NonReference {
-    public String name;
-    public boolean angry;
+@JsonTypeName("freetext")
+public class FreeText implements UserInput {
+    public String value;
 }

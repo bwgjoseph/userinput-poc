@@ -1,11 +1,13 @@
 package com.bwgjoseph.userinputpoc;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+
 import lombok.Getter;
 import lombok.ToString;
 
-@ToString(callSuper = true)
+@ToString
 @Getter
-public class Selection extends NonReference {
-    public String name;
-    public String causeOfDeath;
+@JsonTypeName("selection")
+public class Selection implements UserInput {
+    public String value;
 }

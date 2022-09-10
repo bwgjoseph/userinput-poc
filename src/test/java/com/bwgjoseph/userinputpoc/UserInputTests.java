@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
-class UserInputTests {
+public class UserInputTests {
     private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
     @Test
@@ -26,89 +26,85 @@ class UserInputTests {
 
     @Test
     void shouldCastToReferenceClass_givenUniquePropertiesAssociatedWithReference() throws JsonMappingException, JsonProcessingException {
-        String input = formatJson("{'id':'112233','to':'address'}");
+        String input = formatJson("{'type':'reference','value':'112233','to':'address'}");
 
-        Reference pojo = objectMapper.readValue(input, Reference.class);
+        UserInput pojo = objectMapper.readValue(input, UserInput.class);
 
         System.out.println(pojo);
+        assertTrue(pojo instanceof UserInput);
         assertTrue(pojo instanceof Reference);
         assertSame(pojo.getClass(), Reference.class);
-        assertEquals("112233", pojo.getId());
-        assertEquals("address", pojo.getTo());
+        assertEquals("112233", pojo.getValue());
+        assertEquals("address", ((Reference)pojo).getTo());
     }
 
     @Test
-    void shouldCastToSelectionClass_givenUniquePropertiesAssociatedWithSelection() throws JsonMappingException, JsonProcessingException {
-        String input = formatJson("{'name':'Felix','causeOfDeath':'fell'}");
+    void shouldCastToReferenceClass_givenUniquePropertiesAssociatedWithReferenc2() throws JsonMappingException, JsonProcessingException {
+        String input = formatJson("{'type':'freetext','value':'112233'}");
 
-        NonReference pojo = objectMapper.readValue(input, NonReference.class);
-
-        System.out.println(pojo);
-        assertTrue(pojo instanceof Selection);
-        assertSame(pojo.getClass(), Selection.class);
-        assertEquals("Felix", ((Selection)pojo).getName());
-        assertEquals("fell", ((Selection)pojo).getCauseOfDeath());
-
-    }
-
-    @Test
-    void shouldCastToFreeTextClass_givenUniquePropertiesAssociatedWithFreeText() throws JsonMappingException, JsonProcessingException {
-        String input = formatJson("{'name':'Felix','angry':'false'}");
-
-        NonReference pojo = objectMapper.readValue(input, NonReference.class);
+        UserInput pojo = objectMapper.readValue(input, UserInput.class);
 
         System.out.println(pojo);
+        assertTrue(pojo instanceof UserInput);
         assertTrue(pojo instanceof FreeText);
         assertSame(pojo.getClass(), FreeText.class);
-        assertEquals("Felix", ((FreeText)pojo).getName());
-        assertEquals(false, ((FreeText)pojo).isAngry());
+        assertEquals("112233", pojo.getValue());
     }
 
     @Test
-    void shouldCastToReferenceClass_givenBoxedReferenceClass() throws JsonMappingException, JsonProcessingException {
-        String input = formatJson("{'address':'12 abc road','ui':{'id':'112233','to':'address'}}");
+    void shouldCastToReferenceClass_givenUniquePropertiesAssociatedWithReferenc3() throws JsonMappingException, JsonProcessingException {
+        String input = formatJson("{'type':'selection','value':'112233'}");
 
-        Address pojo = objectMapper.readValue(input, Address.class);
-
-        System.out.println(pojo);
-        assertTrue(pojo instanceof Address);
-        assertSame(pojo.getClass(), Address.class);
-        assertTrue(pojo.getUi() instanceof UserInput);
-        assertTrue(pojo.getUi() instanceof Reference);
-        assertEquals("112233", ((Reference)pojo.getUi()).getId());
-        assertEquals("address", ((Reference)pojo.getUi()).getTo());
-    }
-
-    @Test
-    void shouldCastToSelectionClass_givenBoxedReferenceClass() throws JsonMappingException, JsonProcessingException {
-        String input = formatJson("{'address':'12 abc road','ui':{'type':'selection','name':'Felix','causeOfDeath':'fell'}}");
-
-        Address pojo = objectMapper.readValue(input, Address.class);
+        UserInput pojo = objectMapper.readValue(input, UserInput.class);
 
         System.out.println(pojo);
-        assertTrue(pojo instanceof Address);
-        assertSame(pojo.getClass(), Address.class);
-        assertTrue(pojo.getUi() instanceof UserInput);
-        assertTrue(pojo.getUi() instanceof NonReference);
-        assertTrue(pojo.getUi() instanceof Selection);
-        assertEquals("Felix", ((Selection)pojo.getUi()).getName());
-        assertEquals("fell", ((Selection)pojo.getUi()).getCauseOfDeath());
+        assertTrue(pojo instanceof UserInput);
+        assertTrue(pojo instanceof Selection);
+        assertSame(pojo.getClass(), Selection.class);
+        assertEquals("112233", pojo.getValue());
     }
 
     @Test
     void shouldCastToFreeTextClass_givenBoxedReferenceClass() throws JsonMappingException, JsonProcessingException {
-        String input = formatJson("{'address':'12 abc road','ui':{'name':'Felix','angry':'false'}}");
+        String input = formatJson("{'address':'12 abc road','country':{'type':'reference','value':'reference','to':'hello'}}");
 
         Address pojo = objectMapper.readValue(input, Address.class);
 
         System.out.println(pojo);
         assertTrue(pojo instanceof Address);
         assertSame(pojo.getClass(), Address.class);
-        assertTrue(pojo.getUi() instanceof UserInput);
-        assertTrue(pojo.getUi() instanceof NonReference);
-        assertTrue(pojo.getUi() instanceof FreeText);
-        assertEquals("Felix", ((FreeText)pojo.getUi()).getName());
-        assertEquals(false, ((FreeText)pojo.getUi()).isAngry());
+        assertTrue(pojo.getCountry() instanceof UserInput);
+        assertTrue(pojo.getCountry() instanceof Reference);
+        assertEquals("reference", ((Reference)pojo.getCountry()).getValue());
+        assertEquals("hello", ((Reference)pojo.getCountry()).getTo());
+    }
+
+    @Test
+    void shouldCastToFreeTextClass_givenBoxedReferenceClass2() throws JsonMappingException, JsonProcessingException {
+        String input = formatJson("{'address':'12 abc road','country':{'type':'freetext','value':'freetext'}}");
+
+        Address pojo = objectMapper.readValue(input, Address.class);
+
+        System.out.println(pojo);
+        assertTrue(pojo instanceof Address);
+        assertSame(pojo.getClass(), Address.class);
+        assertTrue(pojo.getCountry() instanceof UserInput);
+        assertTrue(pojo.getCountry() instanceof FreeText);
+        assertEquals("freetext", ((FreeText)pojo.getCountry()).getValue());
+    }
+
+    @Test
+    void shouldCastToFreeTextClass_givenBoxedReferenceClass3() throws JsonMappingException, JsonProcessingException {
+        String input = formatJson("{'address':'12 abc road','country':{'type':'selection','value':'selection'}}");
+
+        Address pojo = objectMapper.readValue(input, Address.class);
+
+        System.out.println(pojo);
+        assertTrue(pojo instanceof Address);
+        assertSame(pojo.getClass(), Address.class);
+        assertTrue(pojo.getCountry() instanceof UserInput);
+        assertTrue(pojo.getCountry() instanceof Selection);
+        assertEquals("selection", ((Selection)pojo.getCountry()).getValue());
     }
 
     public static String formatJson(String input) {
